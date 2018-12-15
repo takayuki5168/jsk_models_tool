@@ -4,9 +4,9 @@
     screw-driver)
   )
 
-(defun make-screw-driver-body (tool-length)
-  (let ((a (make-cube 5 5 tool-length))
-	(b (make-cube 30 5 5 :pos (float-vector 15 0 (/ tool-length 2)))))
+(defun make-screw-driver-body ()
+  (let ((a (make-cube 5 5 160))
+	(b (make-cube 30 5 5 :pos (float-vector 15 0 80))))
     (setq a (body+ a b))
     a))
 (defclass screw-driver
@@ -18,10 +18,10 @@
 	 (let ()
 	   (send-super :init)
 
-	   (setq tool-length 150)
-	   (setq hold-length 50)
+	   ;;(setq tool-length 150)
+	   ;;(setq hold-length 50)
 
-	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-screw-driver-body tool-length)) :locate (float-vector 0 0 0)))
+	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-screw-driver-body)) :locate (float-vector 0 0 0)))
 	   (setq links (list body))
 	   (setq joint-list (list))
 	   (send self :assoc body)
@@ -29,12 +29,12 @@
 	   (setq center-coords (make-cascoords))
 	   (send self :assoc center-coords)
 
-	   (setq hold-coords (make-cascoords :pos (float-vector 0 0 (/ tool-length 2))))
+	   (setq hold-coords (make-cascoords :pos (float-vector 0 0 80)))
 	   (send hold-coords :locate (float-vector 0 0 0))
 	   (send hold-coords :rotate (/ pi 2) :y)
 	   (send self :assoc hold-coords)
 
-	   (setq work-coords (make-cascoords :pos (float-vector 0 0 (/ tool-length -2))))
+	   (setq work-coords (make-cascoords :pos (float-vector 0 0 -80)))
 	   (send work-coords :locate (float-vector 0 0 0))
 	   (send work-coords :rotate (/ pi -2) :y)
 	   (send self :assoc work-coords)
@@ -51,12 +51,6 @@
   (:hold-coords () hold-coords)
   (:work-coords () work-coords)    
   )
-
-#|
-(setq *screw-driver* (instance screw-driver :init :pos (float-vector 500 0 800) :rot (float-vector -1 0 0)))
-(objects (list *screw-driver*))
-#|
-
 
 #|
 (setq *screw-driver* (make-screw-driver))
