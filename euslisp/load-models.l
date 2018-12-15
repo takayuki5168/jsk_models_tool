@@ -1,8 +1,7 @@
 (defun load-models-tool
     ()
-  (setq *screw-driver* 0)
-  (setq *diabolo* 0)
-  (setq *diabolo-stick* 0)
+  (load "diabolo-stick.l")
+  (load "screw-driver.l")
   )
 
 (load-models-tool)
