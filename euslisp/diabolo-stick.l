@@ -4,9 +4,9 @@
     diabolo-stick)
   )
 
-(defun make-diabolo-stick-body (tool-length)
-  (let ((a (make-cylinder 20 (* tool-length 0.5)))
-	(b (make-cylinder 5 (* tool-length 0.5) :pos (float-vector 0 0 (* tool-length -0.5)))))
+(defun make-diabolo-stick-body ()
+  (let ((a (make-cylinder 15 140))
+	(b (make-cylinder 5 160 :pos (float-vector 0 0 -150))))
     (send a :set-color :white)
     (send b :set-color :gray)    
     (setq c (body+ a b))
@@ -20,10 +20,10 @@
 	 (let ()
 	   (send-super :init)
 
-	   (setq tool-length 400)
-	   (setq hold-length 200)
+	   (setq tool-length (+ 140 160))
+	   (setq hold-length 140)
 
-	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-diabolo-stick-body tool-length)) :locate (float-vector 0 0 0)))
+	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-diabolo-stick-body)) :locate (float-vector 0 0 0)))
 	   (setq links (list body))
 	   (setq joint-list (list))
 	   (send self :assoc body)
