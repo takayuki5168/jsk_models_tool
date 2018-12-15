@@ -1,10 +1,10 @@
-(defun make-screw-driver ()
-  (let ((*screw-driver* (instance screw-driver :init :pos (float-vector 500 0 800) :rot (float-vector -1 0 0))))
-    *screw-driver*)
+(defun make-screw-driver
+    (&key (pos #f(0 0 0)) (rot #f(0 0 0)))  
+  (let ((screw-driver (instance screw-driver :init :pos pos :rot rot)))
+    screw-driver)
   )
 
-
-(defun make-body (tool-length)
+(defun make-screw-driver-body (tool-length)
   (let ((a (make-cube 5 5 tool-length))
 	(b (make-cube 30 5 5 :pos (float-vector 15 0 (/ tool-length 2)))))
     (setq a (body+ a b))
@@ -14,7 +14,6 @@
   :slots (tool-length hold-length
 		      body center-coords hold-coords work-coords))
 (defmethod screw-driver
-  ;;(:init (&optional p r)
   (:init (&key pos rot)
 	 (let ()
 	   (send-super :init)
@@ -22,7 +21,7 @@
 	   (setq tool-length 150)
 	   (setq hold-length 50)
 
-	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-body tool-length)) :locate (float-vector 0 0 0)))
+	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-screw-driver-body tool-length)) :locate (float-vector 0 0 0)))
 	   (setq links (list body))
 	   (setq joint-list (list))
 	   (send self :assoc body)
