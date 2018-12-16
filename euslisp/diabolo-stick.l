@@ -5,12 +5,13 @@
   )
 
 (defun make-diabolo-stick-body ()
-  (let ((a (make-cylinder 15 140))
-	(b (make-cylinder 5 160 :pos (float-vector 0 0 -160))))
+  (let ((a (make-cylinder 7.5 140))
+	(b (make-cylinder 2.5 160 :pos (float-vector 0 0 -160))))
     (send a :set-color :white)
     (send b :set-color :gray)    
     (setq c (body+ a b))
     c))
+
 (defclass diabolo-stick
   :super cascaded-link
   :slots (tool-length hold-length
@@ -32,8 +33,8 @@
 	   (send self :assoc center-coords)
 
 	   (setq hold-coords (make-cascoords :pos (float-vector 0 0 140)))
-	   (send hold-coords :locate (float-vector 0 0 0))
-	   (send hold-coords :rotate (/ pi 2) :y)
+	   (send hold-coords :locate (float-vector 0 0 -70))
+	   ;;(send hold-coords :rotate (/ pi 2) :y)
 	   (send self :assoc hold-coords)
 
 	   (setq work-coords (make-cascoords :pos (float-vector 0 0 -160)))
@@ -44,15 +45,23 @@
 	   (send self :locate pos)
 	   (send self :rotate (elt rot 0) :x)
 	   (send self :rotate (elt rot 1) :y)
-	   (send self :rotate (elt rot 2) :z)	   	   
+	   ;;(send self :rotate (elt rot 2) :z)	   	   
 	   
 	   (send self :init-ending)
 	   self))
-  
+
+  (:self (&optional (new-self nil))
+		  (if (eq new-self nil)
+		      self
+		    (send self :move-to new-self :world))
+		  )
   (:center-coords () center-coords)
   (:hold-coords () hold-coords)
-  (:work-coords () work-coords)    
+  (:work-coords () work-coords)
   )
+;;(defmethod diabolo-stick
+;;  (:random-hold-coords (locate) )
+;;  )
 
 #|
 (setq *diabolo-stick* (make-diabolo-stick))
