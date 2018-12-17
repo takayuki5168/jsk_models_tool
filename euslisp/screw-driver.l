@@ -9,10 +9,21 @@
 	(b (make-cube 30 5 5 :pos (float-vector 15 0 80))))
     (setq a (body+ a b))
     a))
+
+(defun make-screw-driver-short-body ()
+  (let ((a (make-cube 5 5 160)))
+    a))
+(defun make-screw-driver-long-body ()
+  (let ((a (make-cube 30 5 5 :pos (float-vector 15 0 80))))
+    a))
+
+
 (defclass screw-driver
   :super cascaded-link
   :slots (tool-length hold-length
-		      body center-coords
+		      ;;body
+		      long-body middle-body short-body joint1 joint2
+		      center-coords
 		      loose-hold-coords loose-work-coords
 		      tight-hold-coords tight-work-coords
 		      tight-flag))
@@ -24,10 +35,33 @@
 	   ;;(setq tool-length 150)
 	   ;;(setq hold-length 50)
 
-	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-screw-driver-body)) :locate (float-vector 0 0 0)))
-	   (setq links (list body))
-	   (setq joint-list (list))
-	   (send self :assoc body)
+
+	   ;; links
+	   (setq b (make-cube 5 5 160))
+	   (send b :locate (float-vector 0 0 80))
+	   (send b :set-color :gray)
+	   (setq long-body (instance bodyset-link :init (make-cascoords) :bodies (list b) :name 'long-body))
+	   
+	   (setq b (make-cube 0 0 0))
+	   (send b :locate (float-vector 0 0 0))
+	   (send b :set-color :gray)
+	   (setq middle-body (instance bodyset-link :init (make-cascoords) :bodies (list b) :name 'middle-body))
+
+	   (setq b (make-cube 30 5 5))
+	   (send b :locate (float-vector 15 0 0))
+	   (send b :set-color :gray)
+	   (setq short-body (instance bodyset-link :init (make-cascoords) :bodies (list b) :name 'short-body))
+
+	   (setq links (list long-body middle-body short-body))
+
+	   ;; joint-list
+	   (setq joint1 (instance rotational-joint :init :parent-link long-body :child-link middle-body :axis :z))
+	   (setq joint2 (instance rotational-joint :init :parent-link middle-body :child-link short-body :axis :x))
+	   (setq joint-list (list joint1 joint2))
+	   
+	   (send self :assoc long-body)
+	   (send long-body :assoc middle-body)
+	   (send middle-body :assoc short-body)
 
 	   ;; TODO
 	   (setq tight-flag t)
@@ -68,6 +102,25 @@
 	   (send self :init-ending)
 	   self))
 
+  (:short-body-coords (&optional (new-coords nil))
+		      (if (eq new-coords nil)
+			  short-body
+			(progn
+			  (print (send new-coords :worldcoords))
+			  ;;(setq tmp-coords (send (send short-body :worldcoords) :inverse-transform-vector (send new-coords :worldcoords)))
+			  ;;(send short-body :move-to tmp-coords)
+			  (send short-body :move-to new-coords :world)
+			  ;;(send short-body :locate new-coords :world)
+			  )
+			))
+
+		      
+  (:self-coords (&optional (new-self-coords nil))
+		  (if (eq new-self-coords nil)
+		      self-coords
+		    (send self :move-to new-self-coords :world))
+		  )
+  
   (:set-tight-flag (flag)
 		   (setq tight-flag flag))
   
@@ -98,14 +151,18 @@
 
 #|
 (setq *screw-driver* (make-screw-driver))
-(objects (list *screw-driver* (send *screw-driver* :center-coords) (send *screw-driver* :hold-coords) (send *screw-driver* :work-coords)))
+(objects (list *screw-driver* (send (send *screw-driver* :short-body-coords) :worldcoords)));; (send *screw-driver* :hold-coords) (send *screw-driver* :work-coords)))
+
+(send *screw-driver* :angle-vector #f(45 45))
+(send *screw-driver* :short-body-coords (make-cascoords :pos (float-vector 100 100 100))))
+;;(send *screw-driver* :short-body-coords (make-cascoords))
 |#
 
-;;#|
+#|
 (setq *screw-driver* (make-screw-driver :pos (float-vector 600 0 800)))
 (load "package://pr2eus/pr2-interface.l")
 (pr2-init)
 (send *pr2* :rarm :inverse-kinematics (send *screw-driver* :hold-coords))
 (send *pr2* :larm :inverse-kinematics (send *screw-driver* :work-coords))
 (objects (list *screw-driver* (send *screw-driver* :center-coords) (send *screw-driver* :hold-coords) (send *screw-driver* :work-coords) *pr2*))
-;;|#
+|#
