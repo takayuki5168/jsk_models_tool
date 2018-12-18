@@ -24,8 +24,6 @@
 	   (setq tool-length (+ 140 160))
 	   (setq hold-length 140)
 
-	   (setq random-locate-nt 0)
-
 	   (setq body (instance bodyset-link :init (make-cascoords) :bodies (list (make-diabolo-stick-body)) :locate (float-vector 0 0 0)))
 	   (setq links (list body))
 	   (setq joint-list (list))
@@ -65,15 +63,24 @@
 (defmethod diabolo-stick
   (:tool-length () tool-length)
   
-  (:random-locate (x y theta phai)
+  (:random-locate (x y theta phai)    ;; [m] and [rad]
 		  (let ((tool-offset 30) (height 710) (min-environment-x 450))
-		    (send self :self (make-cascoords :pos (float-vector (+ min-environment-x tool-offset) 0 height) :angle (/ pi -2) :axis :y))
+		    (send self :self (make-cascoords :pos (float-vector (+ min-environment-x tool-offset) 0 height) :angle (/ pi -2) :axis :y) :world)
 		    
-		    ;;(send self :self (make-cascoords :pos (float-vector 0 (- y) (- x)) :angle theta :axis :x) :local)
-		    ;;(send self :self (make-cascoords :pos (float-vector 0 (- y) (- x)) :angle (list theta phai) :axis (list :x :z)) :local)
 		    (send self :self (make-cascoords :pos (float-vector 0 (- y) (- x)) :angle theta :axis :x) :local)
 		    (send self :self (make-cascoords :angle phai :axis :z) :local)		    
 		    ))
+
+  (:random-locate-new (px py pz rx ry rz)   ;; [m] and [rad]
+		  (let ()
+		    (send self :self (make-cascoords :pos (float-vector px py pz)) :world)
+		    (send self :self (make-cascoords :angle rx :axis :x) :local)
+		    (send self :self (make-cascoords :angle ry :axis :y) :local)		    
+		    (send self :self (make-cascoords :angle rz :axis :z) :local)  
+		    ))
+  (:random-hold-coords () ;; TODO
+		)
+  
   )
 
 #|
