@@ -15,7 +15,9 @@
 (defclass diabolo-stick
   :super cascaded-link
   :slots (tool-length hold-length
-		      body center-coords hold-coords work-coords))
+		      body
+		      center-coords hold-coords work-coords
+		      com-coords))
 (defmethod diabolo-stick
   (:init (&key pos rot)
 	 (let ()
@@ -42,6 +44,10 @@
 	   (send work-coords :rotate (/ pi -2) :y)
 	   (send self :assoc work-coords)
 
+	   (setq com-coords (make-cascoords :pos (float-vector 0 0 30)))
+	   (send self :assoc com-coords)
+
+
 	   (send self :locate pos)
 	   (send self :rotate (elt rot 0) :x)
 	   (send self :rotate (elt rot 1) :y)
@@ -58,6 +64,7 @@
   (:center-coords () center-coords)
   (:hold-coords () hold-coords)
   (:work-coords () work-coords)
+  (:com-coords () com-coords)
   )
 
 (defmethod diabolo-stick
