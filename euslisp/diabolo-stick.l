@@ -51,7 +51,7 @@
 	   (send self :locate pos)
 	   (send self :rotate (elt rot 0) :x)
 	   (send self :rotate (elt rot 1) :y)
-	   ;;(send self :rotate (elt rot 2) :z)	   	   
+	   (send self :rotate (elt rot 2) :z)
 	   
 	   (send self :init-ending)
 	   self))
