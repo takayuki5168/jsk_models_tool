@@ -89,15 +89,15 @@
      (send tmp-hold-coords :rotate
 	   (deg2rad (+ (* theta-rate (- max-theta min-theta)) min-theta)) :x)
 
-     ;;#|
+     #|
      (objects (list *diabolo-stick*
 		    (send *diabolo-stick* :center-coords)
 		    (send *diabolo-stick* :hold-coords)
 		    (send *diabolo-stick* :work-coords)
 		    tmp-hold-coords
 		    ))
-     ;;|#     
-     )
+     |#     
+     tmp-hold-coords)
    )
   )
 
