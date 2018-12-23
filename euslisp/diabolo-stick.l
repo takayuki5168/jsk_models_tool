@@ -36,7 +36,6 @@
 
 	   (setq hold-coords (make-cascoords :pos (float-vector 0 0 140)))
 	   (send hold-coords :locate (float-vector 0 0 -70))
-	   ;;(send hold-coords :rotate (/ pi 2) :y)
 	   (send self :assoc hold-coords)
 
 	   (setq work-coords (make-cascoords :pos (float-vector 0 0 -160)))
@@ -77,9 +76,29 @@
 		    (send self :self (make-cascoords :angle ry :axis :y) :local)		    
 		    (send self :self (make-cascoords :angle rz :axis :z) :local)  
 		    ))
-  (:random-hold-coords () ;; TODO
-		)
-  
+  (:random-hold-coords
+   (length-rate theta-rate)   ;; [rate]
+   (let ((tmp-hold-coords (make-cascoords :pos (float-vector 0 0 0)))
+	 (min-length 0)
+	 (max-length 140)
+	 (min-theta -45)
+	 (max-theta 45)
+	 )
+     (send tmp-hold-coords :locate
+	   (float-vector 0 0 (+ (* length-rate (- max-length min-length)) min-length)))
+     (send tmp-hold-coords :rotate
+	   (deg2rad (+ (* theta-rate (- max-theta min-theta)) min-theta)) :x)
+
+     ;;#|
+     (objects (list *diabolo-stick*
+		    (send *diabolo-stick* :center-coords)
+		    (send *diabolo-stick* :hold-coords)
+		    (send *diabolo-stick* :work-coords)
+		    tmp-hold-coords
+		    ))
+     ;;|#     
+     )
+   )
   )
 
 #|
