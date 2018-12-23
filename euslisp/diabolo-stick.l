@@ -78,26 +78,23 @@
 		    ))
   (:random-hold-coords
    (length-rate theta-rate)   ;; [rate]
-   (let ((tmp-hold-coords (make-cascoords :pos (float-vector 0 0 0)))
-	 (min-length 0)
-	 (max-length 140)
-	 (min-theta -45)
-	 (max-theta 45)
+   (let ((tmp-hold-coords (send self :copy-worldcoords))
+	 (min-length (+ 0 20))
+	 (max-length (- 140 20))
+	 (min-theta -30)
+	 (max-theta 30)
 	 )
      (send tmp-hold-coords :locate
 	   (float-vector 0 0 (+ (* length-rate (- max-length min-length)) min-length)))
      (send tmp-hold-coords :rotate
-	   (deg2rad (+ (* theta-rate (- max-theta min-theta)) min-theta)) :x)
+	   (deg2rad (+ (* theta-rate (- max-theta min-theta)) min-theta)) :y)
 
      #|
-     (objects (list *diabolo-stick*
-		    (send *diabolo-stick* :center-coords)
-		    (send *diabolo-stick* :hold-coords)
-		    (send *diabolo-stick* :work-coords)
+     (objects (list self
 		    tmp-hold-coords
 		    ))
      |#     
-     tmp-hold-coords)
+     (send tmp-hold-coords :worldcoords))
    )
   )
 
